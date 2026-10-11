@@ -142,7 +142,7 @@ export function ImportView({ goView }: { goView: (v: ViewKey) => void }) {
                       <div className="mt-1.5 flex flex-wrap items-center gap-2">
                         <input className="f-input !w-40 !py-1 !text-[11.5px]" value={d.topic} onChange={(e) => patch(d.id, { topic: e.target.value })} placeholder="topic" />
                         <select className="f-select !w-24 !py-1 !text-[11.5px]" value={d.difficulty} onChange={(e) => patch(d.id, { difficulty: Number(e.target.value) as DraftProblem['difficulty'] })}>
-                          {[1, 2, 3, 4, 5].map((x) => <option key={x} value={x}>{'●'.repeat(x)}</option>)}
+                          {[1, 2, 3, 4, 5].map((x) => <option key={x} value={x}>{x} — {['', 'routine', 'standard', 'tricky', 'hard', 'brutal'][x]}</option>)}
                         </select>
                         <input className="f-input !w-44 !py-1 !text-[11.5px]" value={d.answerText} onChange={(e) => patch(d.id, { answerText: e.target.value })} placeholder="expected answer (optional)" />
                         <input className="f-input !w-36 !py-1 !text-[11.5px]" value={d.tags.join(', ')} onChange={(e) => patch(d.id, { tags: e.target.value.split(',').map((t) => t.trim()).filter(Boolean) })} placeholder="tags" />

@@ -190,6 +190,7 @@ export function docToText(src: string, max = 160): string {
     .replace(/\$([^$\n]+)\$/g, '$1')
     .replace(/!\[[^\]]*\]\([^)]*\)/g, ' [image] ')
     .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/(\d)\s*\*\s*(\d)/g, '$1×$2')
     .replace(/[#*_`>~-]/g, '')
     .replace(/\s+/g, ' ')
     .trim();

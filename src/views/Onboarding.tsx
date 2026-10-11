@@ -1,5 +1,5 @@
 import type { ViewKey } from '../components/TopTabs';
-import { Sigma, Layers, Lightbulb, RotateCcw, ClipboardList } from 'lucide-react';
+import { Layers, Lightbulb, RotateCcw, ClipboardList } from 'lucide-react';
 
 /** First-run sheet — empty state, no seed data. The bank starts empty by design. */
 export function Onboarding({ goView }: { goView: (v: ViewKey) => void }) {
@@ -8,7 +8,9 @@ export function Onboarding({ goView }: { goView: (v: ViewKey) => void }) {
       <div className="pad mt-8 p-8">
         <div className="flex items-center gap-3">
           <span className="flex h-11 w-11 items-center justify-center rounded bg-[var(--color-bench)] text-[var(--color-paper)]">
-            <Sigma size={22} />
+            <svg width="24" height="24" viewBox="0 0 15 15" aria-hidden="true">
+            <path d="M4 2v11M4 7.5h7" stroke="currentColor" strokeWidth="2" strokeLinecap="square" fill="none" />
+          </svg>
           </span>
           <div>
             <div className="serif text-[24px] font-semibold">Proof</div>

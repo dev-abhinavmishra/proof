@@ -11,6 +11,7 @@ import { isDue } from '../lib/schedule';
 import { timerDeepLink } from '../lib/links';
 import { docToText } from '../lib/doc';
 import { cn, fmtMinutes } from '../lib/utils';
+import { DiffMeter } from '../components/DiffMeter';
 import { Field } from '../components/Field';
 import { Play, Timer, CheckCircle2, Shuffle, Layers3, RotateCcw } from 'lucide-react';
 
@@ -174,11 +175,11 @@ export function SessionSetupView({
               <Field label="Difficulty range">
                 <div className="flex items-center gap-2">
                   <select className="f-select" value={minDiff} onChange={(e) => setMinDiff(Number(e.target.value) as Difficulty)}>
-                    {[1, 2, 3, 4, 5].map((d) => <option key={d} value={d}>{'●'.repeat(d)}</option>)}
+                    {[1, 2, 3, 4, 5].map((d) => <option key={d} value={d}>{d} — {['', 'routine', 'standard', 'tricky', 'hard', 'brutal'][d]}</option>)}
                   </select>
                   <span className="mono text-[12px]">to</span>
                   <select className="f-select" value={maxDiff} onChange={(e) => setMaxDiff(Number(e.target.value) as Difficulty)}>
-                    {[1, 2, 3, 4, 5].map((d) => <option key={d} value={d}>{'●'.repeat(d)}</option>)}
+                    {[1, 2, 3, 4, 5].map((d) => <option key={d} value={d}>{d} — {['', 'routine', 'standard', 'tricky', 'hard', 'brutal'][d]}</option>)}
                   </select>
                 </div>
               </Field>
@@ -285,7 +286,7 @@ function SessionRunner({
                 <div className="truncate text-[13px]">{p ? docToText(p.promptDoc, 110) : 'problem removed'}</div>
                 <div className="mt-0.5 flex gap-1.5">
                   {p && <span className="chip chip--blue !text-[8.5px]">{p.topic}</span>}
-                  {p && <span className="chip !text-[8.5px]">{'●'.repeat(p.difficulty)}</span>}
+                  {p && <DiffMeter level={p.difficulty as 1 | 2 | 3 | 4 | 5} className="!h-[8px]" />}
                   {att && <span className="chip !text-[8.5px]">{att.hintLevel > 0 ? `h${att.hintLevel}` : 'unaided'}</span>}
                 </div>
               </div>

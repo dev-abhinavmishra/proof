@@ -128,8 +128,8 @@ export function LedgerView({ onAttempt, goView }: { onAttempt: (a: Attempt) => v
                   <div className="min-w-0 flex-1">
                     <div className="text-[13px]">{p ? docToText(p.promptDoc, 160) : '(problem removed)'}</div>
                     {e.divergence && (
-                      <div className="mt-1 text-[12px] text-[var(--color-ink-soft)]">
-                        <span className="kicker !text-[9px]">diverged</span> {e.divergence}
+                      <div className="margin-note mt-1.5 text-[12px]">
+                        <span className="kicker !text-[9px] !text-[var(--color-correct-deep)]">broke —</span> {e.divergence}
                       </div>
                     )}
                     {e.repairCue && (

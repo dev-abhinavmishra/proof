@@ -12,6 +12,7 @@ import { specSummary } from '../lib/checking';
 import { isDue } from '../lib/schedule';
 import { cn } from '../lib/utils';
 import { DocView } from '../components/DocView';
+import { DiffMeter } from '../components/DiffMeter';
 import { Field } from '../components/Field';
 import { ProblemEditor } from './ProblemEditor';
 import {
@@ -109,7 +110,7 @@ export function LibraryView({ onAttempt }: { onAttempt: (a: Attempt) => void }) 
             <select className="f-select" value={diff} onChange={(e) => setDiff(Number(e.target.value))}>
               <option value={0}>any</option>
               {[1, 2, 3, 4, 5].map((d) => (
-                <option key={d} value={d}>{'●'.repeat(d)}</option>
+                <option key={d} value={d}>{d} — {['', 'routine', 'standard', 'tricky', 'hard', 'brutal'][d]}</option>
               ))}
             </select>
           </Field>
@@ -216,7 +217,7 @@ function ProblemRow({
           <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
             <span className="chip chip--blue">{p.topic || 'general'}</span>
             {courseCode && <span className="chip">{courseCode}</span>}
-            <span className="chip" title="difficulty">{'●'.repeat(p.difficulty)}</span>
+            <DiffMeter level={p.difficulty} />
             {p.tags.map((t) => (
               <span key={t} className="chip">#{t}</span>
             ))}

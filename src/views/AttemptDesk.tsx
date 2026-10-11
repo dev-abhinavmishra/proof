@@ -7,6 +7,7 @@ import { cn, fmtElapsed, uid } from '../lib/utils';
 import { DocView } from '../components/DocView';
 import { DrawPad } from '../components/DrawPad';
 import { ProofRail, ConfidencePicker, HINT_LABELS } from '../components/ProofRail';
+import { DiffMeter } from '../components/DiffMeter';
 import type { ViewKey } from '../components/TopTabs';
 import {
   Lightbulb, Send, Timer, Plus, Trash2, ImagePlus, PenLine, CheckCheck,
@@ -121,7 +122,7 @@ export function AttemptDesk({
           <div className="flex items-center gap-3">
             <span className="chip chip--blue">{problem.topic || 'general'}</span>
             {course && <span className="chip">{course.code}</span>}
-            <span className="chip" title="difficulty">{'●'.repeat(problem.difficulty)}</span>
+            <DiffMeter level={problem.difficulty} />
             {session && <span className="chip chip--violet">session · {(session.problemIds.indexOf(problem.id) + 1) || '—'}/{session.problemIds.length}</span>}
           </div>
           <div className="flex items-center gap-3">
@@ -149,7 +150,7 @@ export function AttemptDesk({
           <div className="min-w-0 flex-1">
             {/* prompt */}
             <div className="border-b border-[var(--color-rule)] px-6 py-4">
-              <div className="kicker mb-2">the problem</div>
+              <div className="kicker mb-2"><span className="turnstile">⊢</span> the claim — to prove</div>
               <DocView doc={problem.promptDoc} className="text-[15px]" />
               {problem.attachments.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -177,7 +178,7 @@ export function AttemptDesk({
             {/* step editor */}
             <div className="px-6 py-4">
               <div className="mb-2 flex items-center justify-between">
-                <div className="kicker">your work — step {activeStep + 1} of {attempt.work.length}</div>
+                <div className="kicker">your proof — assertion {activeStep + 1} of {attempt.work.length}</div>
                 <div className="flex items-center gap-1">
                   <button
                     className="xbtn mono text-[10px]"
@@ -188,7 +189,7 @@ export function AttemptDesk({
                     }}
                     disabled={submitted}
                   >
-                    <Plus size={12} className="mr-1" /> step
+                    <Plus size={12} className="mr-1" /> assertion
                   </button>
                   <button
                     className="xbtn"
@@ -197,8 +198,8 @@ export function AttemptDesk({
                       setActiveStep(Math.max(0, activeStep - 1));
                     }}
                     disabled={submitted || attempt.work.length <= 1}
-                    aria-label="Remove step"
-                    title="Remove step"
+                    aria-label="Remove assertion"
+                    title="Remove assertion"
                   >
                     <Trash2 size={13} />
                   </button>
@@ -215,7 +216,7 @@ export function AttemptDesk({
           {/* ── right column: answer + hints + submit ── */}
           <aside className="flex w-72 shrink-0 flex-col border-l border-[var(--color-rule)]">
             <div className="border-b border-[var(--color-rule)] px-4 py-3">
-              <div className="kicker mb-2">final answer</div>
+              <div className="kicker mb-2"><span className="turnstile">∴</span> conclusion</div>
               {kind === 'text' && (
                 <input
                   className="f-input"
@@ -313,7 +314,7 @@ export function AttemptDesk({
             <div className="mt-auto px-4 py-3">
               <ConfidencePicker value={attempt.confidence} onChange={(n) => updateAttempt(attempt.id, { confidence: n })} />
               <button className="btn btn--blueprint mt-3 w-full" onClick={submit} disabled={submitted}>
-                <span className="inline-flex items-center gap-1.5"><Send size={12} /> Submit attempt</span>
+                <span className="inline-flex items-center gap-1.5"><Send size={12} /> Submit for verification</span>
               </button>
               {verdict && <div className="mt-2 text-[11.5px] text-[var(--color-ink-soft)]">{verdict}</div>}
             </div>

@@ -32,6 +32,7 @@ export function addMinutesISO(iso: string, minutes: number): string {
 }
 
 export function fmtMinutes(min: number): string {
+  if (min < 1) return `${Math.round(min * 60)}s`;
   if (min < 60) return `${Math.round(min)}m`;
   const h = Math.floor(min / 60);
   const m = Math.round(min % 60);

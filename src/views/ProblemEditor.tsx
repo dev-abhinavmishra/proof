@@ -87,7 +87,7 @@ export function ProblemEditor({ problem, onClose }: { problem: Problem | null; o
           <Field label="Difficulty">
             <select className="f-select" value={difficulty} onChange={(e) => setDifficulty(Number(e.target.value) as Difficulty)}>
               {[1, 2, 3, 4, 5].map((d) => (
-                <option key={d} value={d}>{d} — {'●'.repeat(d)}</option>
+                <option key={d} value={d}>{d} — {['', 'routine', 'standard', 'tricky', 'hard', 'brutal'][d]}</option>
               ))}
             </select>
           </Field>

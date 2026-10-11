@@ -128,15 +128,20 @@ export function CompareView({
       <div className="pad mt-3 p-5">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <div className="kicker">compare — {problem.topic || 'general'}</div>
+            <div className="kicker">verifying the proof — {problem.topic || 'general'}</div>
             <div className="mt-1 text-[13px] text-[var(--color-ink-soft)]">
-              Your attempt on the left, the worked solution on the right. It folds open now — your work is never overwritten.
+              Your attempt on the left, the worked proof on the right. It folds open now — your work is never overwritten.
             </div>
           </div>
           <div className="flex items-center gap-2">
             {finalResult && (
-              <span className={cn('mark', finalResult === 'correct' ? 'mark--correct' : finalResult === 'partial' ? 'mark--partial' : 'mark--incorrect')}>
-                {finalResult === 'correct' ? '✓ correct' : finalResult === 'partial' ? '◐ partial' : '✕ incorrect'}
+              <span
+                className={cn(
+                  'stamp stamp--in',
+                  finalResult === 'correct' ? 'stamp--verified' : finalResult === 'partial' ? 'stamp--tentative' : 'stamp--broken',
+                )}
+              >
+                {finalResult === 'correct' ? '✓ verified' : finalResult === 'partial' ? '◐ tentative' : '✕ broken'}
               </span>
             )}
             {verdict && attempt.resultSource === 'auto' && (
@@ -148,7 +153,7 @@ export function CompareView({
         {needsSelfGrade && (
           <div className="hint-pane mb-4 px-3 py-2.5">
             <div className="mono mb-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--color-hint-deep)]">
-              grade yourself against the worked solution
+              grade yourself against the worked proof
             </div>
             <div className="flex flex-wrap gap-1.5">
               {(['correct', 'partial', 'incorrect'] as AttemptResult[]).map((r) => (
@@ -168,7 +173,7 @@ export function CompareView({
           {/* attempt side */}
           <div className="film rounded">
             <div className="border-b border-[var(--color-rule)] px-4 py-2.5">
-              <div className="kicker">your attempt — click a step where you diverged</div>
+              <div className="kicker">your proof — mark the assertion that broke</div>
             </div>
             <div className="flex">
               <div className="w-12 shrink-0 border-r border-[var(--color-rule)] pt-3">
@@ -218,17 +223,17 @@ export function CompareView({
             </div>
           </div>
 
-          {/* worked solution side — folds open */}
+          {/* the worked proof side — folds open */}
           <div className="solution-pane solution-pane--in film rounded">
             <div className="border-b border-[var(--color-rule)] px-4 py-2.5">
-              <div className="kicker">worked solution</div>
+              <div className="kicker">the worked proof</div>
             </div>
             <div className="p-4">
               {problem.workedSolutionDoc.trim() ? (
-                <DocView doc={problem.workedSolutionDoc} className="text-[14px]" />
+                <div><DocView doc={problem.workedSolutionDoc} className="text-[14px]" /><span className="qed" aria-label="quod erat demonstrandum" title="q.e.d." /></div>
               ) : (
                 <div className="text-[12.5px] italic text-[var(--color-ink-soft)]">
-                  No worked solution filed for this problem — grade against the expected answer
+                  No worked proof filed for this problem — grade against the expected answer
                   {problem.answerSpec.kind !== 'open' ? ' shown below' : ''}.
                 </div>
               )}
@@ -307,7 +312,7 @@ export function CompareView({
             </label>
           </div>
           <div className="film rounded p-4">
-            <div className="kicker mb-2">classify the error</div>
+            <div className="kicker mb-2">classify the break</div>
             <div className="flex flex-wrap gap-1.5">
               {CATEGORIES.map((c) => (
                 <button

@@ -1,6 +1,15 @@
 import { cn } from '../lib/utils';
 import type { RouteState } from '../App';
-import { HelpCircle, Sigma } from 'lucide-react';
+import { HelpCircle } from 'lucide-react';
+
+/** Turnstile ⊢ — the app mark: a proof asserting its conclusion. */
+function Turnstile() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 15 15" aria-hidden="true">
+      <path d="M4 2v11M4 7.5h7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="square" fill="none" />
+    </svg>
+  );
+}
 
 export type ViewKey =
   | 'library'
@@ -35,8 +44,8 @@ export function TopTabs({
     <header className="no-print flex items-end justify-between px-5 pt-3" role="banner">
       <div className="flex items-center gap-5">
         <div className="flex items-center gap-2.5 pb-1">
-          <span className="flex h-7 w-7 items-center justify-center rounded bg-[var(--color-paper)] text-[var(--color-bench)]">
-            <Sigma size={16} strokeWidth={2.4} />
+          <span className="flex h-7 w-7 items-center justify-center rounded bg-[var(--color-paper)] text-[var(--color-blueprint-deep)]">
+            <Turnstile />
           </span>
           <span className="serif text-[19px] font-semibold tracking-wide text-[var(--color-paper)]">
             Proof
@@ -49,7 +58,7 @@ export function TopTabs({
           {TABS.map((t) => (
             <button
               key={t.key}
-              className={cn('dtab', (route.view === t.key || (route.view === 'attempt' && t.key === 'session') || (route.view === 'compare' && t.key === 'session')) && 'dtab--on')}
+              className={cn('dtab', route.view === t.key && 'dtab--on')}
               onClick={() => goView(t.key)}
               aria-current={route.view === t.key ? 'page' : undefined}
             >
