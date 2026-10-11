@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { useWorkbench, selectErrorsFor } from '../store';
 import type { Attempt, AttemptResult, ErrorCategory } from '../lib/types';
 import { autoCheck } from '../lib/checking';
@@ -24,10 +25,12 @@ const CATEGORIES: { key: ErrorCategory; label: string }[] = [
 export function CompareView({
   attemptId,
   goView,
+  goSession,
   onAttempt,
 }: {
   attemptId: string;
   goView: (v: ViewKey) => void;
+  goSession: (sessionId?: string) => void;
   onAttempt: (a: Attempt) => void;
 }) {
   const attempt = useWorkbench((s) => s.attempts[attemptId]);
@@ -40,11 +43,11 @@ export function CompareView({
   const fileError = useWorkbench((s) => s.fileError);
   const updateError = useWorkbench((s) => s.updateError);
   const scheduleReview = useWorkbench((s) => s.scheduleReview);
-  const errors = useWorkbench((s) => selectErrorsFor(s, attempt?.problemId));
+  const errors = useWorkbench(useShallow((s) => selectErrorsFor(s, attempt?.problemId)));
   const startAttempt = useWorkbench((s) => s.startAttempt);
 
   const existing = errors.find((e) => e.attemptId === attemptId);
-  const [category, setCategory] = useState<ErrorCategory>(existing?.category ?? 'conceptual-gap');
+  const [category, setCategory] = useState<ErrorCategory | null>(existing?.category ?? null);
   const [customLabel, setCustomLabel] = useState(existing?.customLabel ?? '');
   const [divergence, setDivergence] = useState(existing?.divergence ?? '');
   const [repairCue, setRepairCue] = useState(existing?.repairCue ?? '');
@@ -57,10 +60,14 @@ export function CompareView({
     return autoCheck(problem.answerSpec, attempt, rubric);
   }, [attempt, problem, rubric]);
 
+  // label used by exports — may run before a category is picked
+  const errorLabel = category === 'custom' ? customLabel : (category ?? 'unclassified');
+
   const toggleStep = (i: number) =>
     setDivergentSteps((d) => (d.includes(i) ? d.filter((x) => x !== i) : [...d, i].sort((a, b) => a - b)));
 
   const fileRecord = () => {
+    if (!category) return;
     if (!attempt) return;
     const payload = {
       attemptId,
@@ -88,7 +95,7 @@ export function CompareView({
       problem,
       divergence,
       repairCue,
-      category: category === 'custom' ? customLabel : category,
+      category: errorLabel,
     });
     const blob = new Blob([md], { type: 'text/markdown' });
     const a = document.createElement('a');
@@ -326,7 +333,7 @@ export function CompareView({
               {attempt.result ? ' and keeps your grade.' : ' your self-grade will be stamped.'}
             </div>
             <div className="mt-3 flex flex-wrap gap-2">
-              <button className="btn btn--correct" onClick={fileRecord} disabled={category === 'custom' && !customLabel.trim()}>
+              <button className="btn btn--correct" onClick={fileRecord} disabled={!category || (category === 'custom' && !customLabel.trim())}>
                 {existing ? 'Update record' : 'File record + schedule retry'}
               </button>
               <button
@@ -334,7 +341,7 @@ export function CompareView({
                 title="Send an atomic misconception card to Flashcards"
                 onClick={() => {
                   const card = misconceptionCard({
-                    category: category === 'custom' ? customLabel : category,
+                    category: errorLabel,
                     repairCue: repairCue || divergence || problem.topic,
                     problem,
                   });
@@ -347,7 +354,7 @@ export function CompareView({
               <button className="btn btn--ghost" title="Download a Markdown note for Ink" onClick={downloadInkNote}>
                 <span className="inline-flex items-center gap-1.5"><NotebookPen size={12} /> Note → Ink</span>
               </button>
-              <button className="btn btn--ghost" title="Copy correction note to clipboard" onClick={() => navigator.clipboard.writeText(inkNoteMarkdown({ title: `Correction — ${problem.topic}`, problem, divergence, repairCue, category: category === 'custom' ? customLabel : category }))}>
+              <button className="btn btn--ghost" title="Copy correction note to clipboard" onClick={() => navigator.clipboard.writeText(inkNoteMarkdown({ title: `Correction — ${problem.topic}`, problem, divergence, repairCue, category: errorLabel }))}>
                 <Download size={12} />
               </button>
             </div>
@@ -363,7 +370,7 @@ export function CompareView({
             <button className="btn btn--ghost" onClick={retryNow}>
               <span className="inline-flex items-center gap-1.5"><RotateCcw size={12} /> Retry now</span>
             </button>
-            <button className="btn btn--blueprint" onClick={() => goView(attempt.sessionId ? 'session' : 'library')}>
+            <button className="btn btn--blueprint" onClick={() => (attempt.sessionId ? goSession(attempt.sessionId) : goView('library'))}>
               {attempt.sessionId ? 'Back to session' : 'Back to library'} <ArrowRight size={12} className="ml-1 inline" />
             </button>
           </div>

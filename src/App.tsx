@@ -29,9 +29,10 @@ export function App() {
 
   const [route, setRoute] = useState<RouteState>({ view: 'library' });
   const [helpOpen, setHelpOpen] = useState(false);
+  const [onboardingSeen, setOnboardingSeen] = useState(false);
 
   const nav = (patch: Partial<RouteState>) => setRoute((r) => ({ ...r, ...patch }));
-  const goView = (view: ViewKey) => setRoute({ view });
+  const goView = (view: ViewKey) => { setOnboardingSeen(true); setRoute({ view }); };
   const startAttempt = (attemptId: string, sessionId?: string) =>
     setRoute({ view: 'attempt', attemptId, sessionId });
   const openCompare = (attemptId: string) => setRoute({ view: 'compare', compareAttemptId: attemptId });
@@ -91,7 +92,7 @@ export function App() {
     <div className="flex h-full flex-col">
       <TopTabs route={route} goView={goView} due={due} onHelp={() => setHelpOpen(true)} />
       <main className="min-h-0 flex-1 overflow-y-auto">
-        {problemCount === 0 && route.view !== 'import' && route.view !== 'settings' ? (
+        {problemCount === 0 && !onboardingSeen ? (
           <Onboarding goView={goView} />
         ) : (
           <>
@@ -107,7 +108,7 @@ export function App() {
               <AttemptDesk attemptId={route.attemptId} onCompare={openCompare} goView={goView} />
             )}
             {route.view === 'compare' && route.compareAttemptId && (
-              <CompareView attemptId={route.compareAttemptId} goView={goView} onAttempt={(a) => startAttempt(a.id, a.sessionId)} />
+              <CompareView attemptId={route.compareAttemptId} goView={goView} goSession={(sid) => nav({ view: 'session', sessionId: sid })} onAttempt={(a) => startAttempt(a.id, a.sessionId)} />
             )}
             {route.view === 'ledger' && <LedgerView onAttempt={(a) => startAttempt(a.id, a.sessionId)} goView={goView} />}
             {route.view === 'progress' && <ProgressView />}

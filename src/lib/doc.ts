@@ -30,9 +30,13 @@ function inline(src: string): string {
   let s = esc(src);
   // inline math first so md rules don't touch tex internals
   const mathSlots: string[] = [];
+  s = s.replace(/\$\$([^$\n]+?)\$\$/g, (_, tex) => {
+    mathSlots.push(renderMath(tex, true));
+    return `\x00${mathSlots.length - 1}\x00`;
+  });
   s = s.replace(/\$([^$\n]+?)\$/g, (_, tex) => {
     mathSlots.push(renderMath(tex, false));
-    return `${mathSlots.length - 1}`;
+    return `\x00${mathSlots.length - 1}\x00`;
   });
   s = s
     .replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`)
@@ -58,7 +62,7 @@ function inline(src: string): string {
     return text;
   });
   // restore math
-  s = s.replace(/(\d+)/g, (_, i) => mathSlots[Number(i)] ?? '');
+  s = s.replace(/\x00(\d+)\x00/g, (_, i) => mathSlots[Number(i)] ?? '');
   return s;
 }
 

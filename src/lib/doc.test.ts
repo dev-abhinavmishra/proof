@@ -35,6 +35,18 @@ describe('renderDoc', () => {
     const html = renderDoc('```\nlet x = **not bold**;\n```');
     expect(html).toContain('<pre><code>let x = **not bold**;');
   });
+  it('preserves literal digits next to math slots', () => {
+    const html = renderDoc('At $t = 3$ s the speed is 20 m/s in trial 42.');
+    expect(html).toContain('20 m/s');
+    expect(html).toContain('42');
+    expect(html).toContain('katex');
+  });
+
+  it('renders inline display math', () => {
+    const html = renderDoc('So $$x^2$$ inline.');
+    expect(html).toContain('katex-display');
+  });
+
   it('docToText strips markup', () => {
     expect(docToText('**Hi** $x^2$ [a](b)')).toBe('Hi x^2 a');
   });
