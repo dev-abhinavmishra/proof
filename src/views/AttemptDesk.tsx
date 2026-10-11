@@ -349,10 +349,12 @@ function StepEditor({
   return (
     <div>
       <div className="mb-1.5 flex items-center gap-1">
-        <button className={cn('xbtn mono text-[10px]', mode === 'write' && 'bg-[rgb(var(--blueprint-rgb)/0.12)]')} onClick={() => setMode('write')} disabled={readOnly}>write</button>
-        <button className={cn('xbtn mono text-[10px]', mode === 'draw' && 'bg-[rgb(var(--blueprint-rgb)/0.12)]')} onClick={() => setMode('draw')} disabled={readOnly}>
-          <PenLine size={11} className="mr-0.5" /> draw
-        </button>
+        <span className="seg">
+          <button type="button" className={mode === 'write' ? 'seg--on' : undefined} onClick={() => setMode('write')} disabled={readOnly}>write</button>
+          <button type="button" className={mode === 'draw' ? 'seg--on' : undefined} onClick={() => setMode('draw')} disabled={readOnly}>
+            <PenLine size={11} /> draw
+          </button>
+        </span>
         {!readOnly && (
           <label className="xbtn" title="Attach image to step (≤600KB)">
             <ImagePlus size={13} />

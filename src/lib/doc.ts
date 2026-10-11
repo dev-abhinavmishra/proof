@@ -40,6 +40,7 @@ function inline(src: string): string {
   });
   s = s
     .replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`)
+    .replace(/(\d)\s*\*\s*(\d)/g, '$1×$2')
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     .replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>')
     .replace(/__([^_]+)__/g, '<strong>$1</strong>')
